@@ -1,0 +1,64 @@
+{% extends "basePage.html" %}
+
+{% block body_block %}
+	<div class="container" id="home">
+		<div>
+			
+			{% if registered %}
+				<h2>You're one step away from being awesome!</h2>
+				<p><a href="/login/" class="btn btn-success">Login</a></p>
+			{% else %}
+				<form id="register" role="form" method="POST" action="/register/">
+					{% csrf_token %}
+					<h2>Create an account</h2>
+					<p>It's free and always will be.</p>
+					<hr class="colorgraph">
+					{% for field in user_form %}
+						{% if field.errors %}
+							<div class="control-group error">
+								<label class="control-label">{{ field.label }}</label> 
+								<div class="controls">{{ field }}
+									<span class="help-inline">
+									{% for error in  field.errors %}{{ error }}{% endfor %}
+									</span>
+								</div>
+							</div>
+						{% else %}
+							<div class="form-group">
+								<label class="control-label">{{ field.label }}</label> 
+								<div class="controls">
+									{{ field }}
+									{% if field.help_text %}
+									<p class="help-inline"><small>{{ field.help_text }}</small></p>
+									{% endif %}
+								</div>
+							</div>
+						{% endif %}
+					{% endfor %}
+					{% for field in profile_form %}
+						{% if field.errors %}
+							<div class="control-group error">
+								<label class="control-label">{{ field.label }}</label> 
+								<div class="controls">{{ field }}
+									<span class="help-inline">
+									{% for error in  field.errors %}{{ error }}{% endfor %}
+									</span>
+								</div>
+							</div>
+						{% else %}
+							<div class="form-group">
+								<label class="control-label">{{ field.label }}</label> 
+								<div class="controls">
+									{{ field }}									
+								</div>
+							</div>
+						{% endif %}
+					{% endfor %}
+					<input type="submit" class="btn btn-large btn-success" name="submit" value="Register" />
+				</form>
+			{% endif %}
+		</div>
+		
+	</div>
+
+{% endblock %}

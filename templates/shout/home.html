@@ -1,0 +1,50 @@
+{% extends "basePage.html" %}
+{% block nav_block %}
+	<ul class="nav navbar-nav navbar-right">
+		<li><a href="/logout/">Log Out</a></li>
+	</ul>
+{% endblock %}
+{% block body_block %}
+<div class="container">
+	<div class="row">
+		<div class="col-md-3">
+			<div class="wall">
+				<div class="userProfile">
+					<h3><a href="#">{{ first_name }}</a></h3>
+					<div class="userInfo">
+						<ul class="stats">
+							<li><a href="#">Shouts</a></li>
+							<li><a href="#">Followers</a></li>
+							<li><a href="#">Following</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="clear"></div>
+				<hr />
+				<div class="newsfeed">
+					<h4>Upcoming Events</h4>
+				</div>
+			</div>		
+		</div>
+		<div class="col-md-6">
+			<div class="wall">
+				<div class="post_shout">
+					<div class="mg10">
+						<textarea class="form-control"></textarea>	
+					</div>
+					<button class="btn btn-large btn-primary pull-right">Shout!</button>
+					<div class="clear"></div>
+				</div>
+				<div class="shouts">
+
+				</div>
+				
+			</div>
+			
+		</div>
+		<div class="col-md-3">
+		</div>
+	</div>
+</div>
+
+{% endblock %}

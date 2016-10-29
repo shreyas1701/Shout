@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head>
+	<meta charset="utf-8"></meta>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Shout</title>
+	<link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link href="//fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+	<link href="//fonts.googleapis.com/css?family=Bitter" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href='{% static "css/styles.css" %}'>
+</head>
+<body>
+	<nav class="navbar navbar-default navbar-static-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/">Shout</a>
+			</div>
+			<div id="navbar" class="navbar-collapse collapse">
+				{% block nav_block %}
+
+				{% endblock %}
+			</div><!--/.nav-collapse -->
+		</div>
+	</nav>
+	{% block body_block %}
+	{% endblock %} 
+	
+	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
+	<script src='{% static "js/scripts.js" %}'></script>
+	<script src='{% static "js/homeScript.js" %}' ></script>
+</body>
+</html>
