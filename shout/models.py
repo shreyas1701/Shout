@@ -13,4 +13,9 @@ class UserProfile(models.Model):
     
     def __str__(self):
         return self.user.username
-        
+
+class Shouts(models.Model):
+	shout = models.CharField(max_length=160)
+	user = models.CharField(max_length=150)
+	shout_at = models.DateTimeField(max_length=50)
+		
