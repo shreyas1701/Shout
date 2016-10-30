@@ -89,6 +89,10 @@ body{
     margin-bottom: 5px;
 }
 
+.shout p{
+	word-wrap: break-word;
+}
+
 .shout .timestamp{
 	font-size: 70%;
 }
