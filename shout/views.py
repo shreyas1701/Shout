@@ -22,11 +22,9 @@ def home(request):
 
 		c = ((b-a).total_seconds())
 
-		print c
-
 		if c/86400 < 1:
 			if c/3600 < 1:
-				if c/60 < 1 and c > 0:
+				if c/60 < 1 and c > 5:
 					s.shout_at = str(int(c))+"s"
 				elif int(c) <= 5:
 					s.shout_at = "A few seconds ago!"
