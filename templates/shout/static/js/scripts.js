@@ -5,5 +5,6 @@ $(document).ready(function(){
 			alert("Passwords don't watch");
 			e.preventDefault();
 		}	
-	});	
+	});
+	$("#username").focus();
 });
