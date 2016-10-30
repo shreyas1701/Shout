@@ -29,14 +29,26 @@
 		<div class="col-md-6">
 			<div class="wall">
 				<div class="post_shout">
-					<div class="mg10">
-						<textarea class="form-control"></textarea>	
-					</div>
-					<button class="btn btn-large btn-primary pull-right">Shout!</button>
+					<span id="char_count" class="pull-right"><span class="charNum">0</span><span>/160</span></span>
 					<div class="clear"></div>
+					<form role="form" method="post" action="/shout/">
+						{% csrf_token %}
+						<div class="mg10">
+							<textarea class="shout_text form-control" placeholder="What's Happening?" name="shout"></textarea>	
+						</div>
+						<input type="submit" id="shoutBtn" value="Shout!" class="btn btn-large btn-primary pull-right" />
+						<div class="clear"></div>	
+					</form>					
 				</div>
 				<div class="shouts">
-
+				{% for q in shout_list %}
+					<div class="shout">
+						<h4><a href="#">{{ q.user }}</a></h4>
+						<p class="shout_text">{{ q.shout }}</p>
+						<p class="timestamp pull-right">{{ q.shout_at }}</p>
+						<div class="clear"></div>
+					</div>
+				{% endfor %}
 				</div>
 				
 			</div>
