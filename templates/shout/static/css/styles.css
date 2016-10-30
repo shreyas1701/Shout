@@ -1,5 +1,5 @@
 body{
-	background-color: #E4DBD1;
+	background-color:#DCDDCD;
 	font-family: 'Bitter', sans-serif;
 }
 
@@ -10,7 +10,11 @@ body{
 }
 
 .navbar-brand{
-	color: #E6DAB9 !important;
+	color: #FF534B !important;
+}
+
+.navbar-brand:focus, .navbar-brand:hover{
+	color: #ff8f4b !important;
 }
 
 .navbar-default .navbar-nav > li > a {
@@ -75,5 +79,20 @@ body{
 }
 
 .shouts{
-	
+	margin: 10px;
+}
+
+.shout{
+    border-radius: 5px;
+    background:#eaf8fc;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+.shout .timestamp{
+	font-size: 70%;
+}
+
+#char_count{
+	font-size: 80%
 }
