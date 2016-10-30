@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from .forms import UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
+from .models import Shouts
+import datetime
+from django.utils.timezone import utc
 
 # Create your views here.
 def index(request):
@@ -10,8 +13,31 @@ def index(request):
 		return render(request, "shout/index.html")
 
 def home(request):
-	first_name = request.user.first_name;
-	return render(request, "shout/home.html",{"first_name":first_name})
+	first_name = request.user.first_name
+	shout_list = Shouts.objects.all()
+
+	for s in shout_list:
+		a = s.shout_at
+		b = datetime.datetime.utcnow().replace(tzinfo=utc)
+
+		c = ((b-a).total_seconds())
+
+		print c
+
+		if c/86400 < 1:
+			if c/3600 < 1:
+				if c/60 < 1 and c > 0:
+					s.shout_at = str(int(c))+"s"
+				elif int(c) <= 5:
+					s.shout_at = "A few seconds ago!"
+				else:
+					s.shout_at = str(int(c/60))+"m"
+			else:
+				s.shout_at = str(int(c/3600))+"h"
+		else:
+			s.shout_at = str(int(c/86400))+"d"
+
+	return render(request, "shout/home.html",{"first_name":first_name, "shout_list":shout_list})
 
 def register(request):
 	registered = False
@@ -54,6 +80,12 @@ def user_login(request):
 
 	else:
 		return render(request, "shout/login.html", {})
+
+def shout(request):
+	
+	shoutObj = Shouts(shout=request.POST["shout"], user=request.user.first_name, shout_at=datetime.datetime.utcnow().replace(tzinfo=utc))	
+	shoutObj.save()
+	return home(request)
 
 def user_logout(request):
 	logout(request)
