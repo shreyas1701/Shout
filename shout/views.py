@@ -80,10 +80,11 @@ def user_login(request):
 		return render(request, "shout/login.html", {})
 
 def shout(request):
-	
-	shoutObj = Shouts(shout=request.POST["shout"], user=request.user.first_name, shout_at=datetime.datetime.utcnow().replace(tzinfo=utc))	
-	shoutObj.save()
-	return home(request)
+	shout_text = request.POST["shout"]
+	if len (shout_text) > 0 and len(shout_text) <= 160:
+		shoutObj = Shouts(shout=shout_text, user=request.user.first_name, shout_at=datetime.datetime.utcnow().replace(tzinfo=utc))	
+		shoutObj.save()
+		return home(request)
 
 def user_logout(request):
 	logout(request)
