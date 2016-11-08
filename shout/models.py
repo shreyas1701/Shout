@@ -5,14 +5,14 @@ import datetime
 
 # Create your models here.
 class UserProfile(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, related_name='profile')
 
-    #extra fields
+    'extra fields'
     dateOfBirth = models.DateField(auto_now=False, auto_now_add=False, default=datetime.date.today())
     bio = models.CharField(max_length=250)
-    
+
     def __str__(self):
-        return self.user.username
+        return 'Profile of user: {}'.format(self.user.username)
 
 class Shouts(models.Model):
 	shout = models.CharField(max_length=160)

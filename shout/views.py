@@ -119,4 +119,10 @@ def events(request):
 		eventObj.save()
 		return home(request)
 	else:
-		return render(request, "shout/events.html")
+		return render(request, "shout/events.html"
+
+
+def profile_view(request):
+	profile = request.user.profile()
+	context_dict = {'profile':profile}
+	render(request, "shout/profile.html", context_dict)
