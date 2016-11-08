@@ -119,7 +119,7 @@ def events(request):
 		eventObj.save()
 		return home(request)
 	else:
-		return render(request, "shout/events.html"
+		return render(request, "shout/events.html")
 
 
 def profile_view(request):
