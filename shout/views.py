@@ -89,3 +89,34 @@ def shout(request):
 def user_logout(request):
 	logout(request)
 	return index(request)
+
+def events(request):
+	if request.method == "POST":
+		event_name = request.POST["eventName"]
+		event_descp = request.POST["eventDescription"]
+		start_date = request.POST["startDate"]
+		end_date = request.POST["endDate"]
+		invitees = request.POST.getlist('invitees')
+		for x in invitees:
+			print x
+		
+		try:
+			s_month = start_date[0:2]
+			s_date = start_date[3:5]
+			s_year = start_date[6:] 
+			st_date_string = s_year + '-' + s_month + '-' + s_date
+			st_date = datetime.strptime(st_date_string, '%Y-%m-%d')
+			e_month = end_date[0:2]
+			e_date = end_date[3:5]
+			e_year = end_date[6:] 
+			en_date_string = e_year + '-' + e_month + '-' + e_date
+			en_date = datetime.strptime(en_date_string, '%Y-%m-%d')        
+
+		except Exception as e:
+			cont = {"message":""+str(e)}
+
+		eventObj = Events(event_name=event_name,event_descp=event_descp,start_date=st_date,end_date=en_date,user=request.user.first_name)
+		eventObj.save()
+		return home(request)
+	else:
+		return render(request, "shout/events.html")

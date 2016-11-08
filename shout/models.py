@@ -18,4 +18,10 @@ class Shouts(models.Model):
 	shout = models.CharField(max_length=160)
 	user = models.CharField(max_length=150)
 	shout_at = models.DateTimeField(max_length=50)
-		
+
+class Events(models.Model):
+    event_name = models.CharField(max_length=160)
+    event_descp = models.CharField(max_length=150)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    username = models.CharField(max_length=150)

@@ -7,4 +7,12 @@ $(document).ready(function(){
 		}	
 	});
 	$("#username").focus();
+	$(".chosen-select").chosen({width: "95%"});
+
+	$("#datetimepicker").datetimepicker({
+		language: 'pt-BR'
+	});
+	$("#datetimepicker1").datetimepicker({
+		language: 'pt-BR'
+	});
 });
