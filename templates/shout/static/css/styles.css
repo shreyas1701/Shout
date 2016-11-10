@@ -100,3 +100,7 @@ body{
 #char_count{
 	font-size: 80%
 }
+
+#eventForm .row{
+	margin-bottom: 10px;
+}
