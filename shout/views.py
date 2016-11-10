@@ -2,7 +2,7 @@ from django.shortcuts import render
 from .forms import UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from .models import Shouts, Events
+from .models import UserProfile, Shouts, Events
 import datetime
 from django.utils.timezone import utc
 
@@ -17,27 +17,9 @@ def home(request):
     first_name = request.user.first_name
     shout_list = Shouts.objects.all().order_by('-shout_at')
 
-    for s in shout_list:
-        a = s.shout_at
-        b = datetime.datetime.utcnow().replace(tzinfo=utc)
-        c = ((b-a).total_seconds())
+    shouts = change_time(shout_list)
 
-        if c/86400 < 1:
-            if c/3600 < 1:
-                if c/60 < 1 and c > 5:
-                    s.shout_at = str(int(c))+"s"
-                elif int(c) <= 5:
-                    s.shout_at = "A few seconds ago!"
-                else:
-                    s.shout_at = str(int(c/60))+"m"
-            else:
-                s.shout_at = str(int(c/3600))+"h"
-        else:
-            s.shout_at = str(int(c/86400))+"d"
-
-        s.user = User.objects.get(id=int(s.user)).first_name
-
-    return render(request, "shout/home.html",{"first_name":first_name, "shout_list":shout_list})
+    return render(request, "shout/home.html",{"first_name":first_name, "shout_list":shouts})
 
 def register(request):
     registered = False
@@ -83,10 +65,14 @@ def user_login(request):
 
 def shout(request):
     shout_text = request.POST["shout"]
+    page = request.POST["pageName"]
     if len (shout_text) > 0 and len(shout_text) <= 160:
         shoutObj = Shouts(shout=shout_text, user=request.user.id, shout_at=datetime.datetime.utcnow().replace(tzinfo=utc))  
         shoutObj.save()
-        return home(request)
+        if page == "profile":
+            return profile_view(request)
+        else:
+            return home(request)
 
 def user_logout(request):
     logout(request)
@@ -127,8 +113,35 @@ def events(request):
         users = User.objects.all()
         return render(request, "shout/events.html", {'users':users})
 
+def change_time(shout_list):
+    for s in shout_list:
+        a = s.shout_at
+        b = datetime.datetime.utcnow().replace(tzinfo=utc)
+        c = ((b-a).total_seconds())
+
+        if c/86400 < 1:
+            if c/3600 < 1:
+                if c/60 < 1 and c > 5:
+                    s.shout_at = str(int(c))+"s"
+                elif int(c) <= 5:
+                    s.shout_at = "A few seconds ago!"
+                else:
+                    s.shout_at = str(int(c/60))+"m"
+            else:
+                s.shout_at = str(int(c/3600))+"h"
+        else:
+            s.shout_at = str(int(c/86400))+"d"
+
+        s.user = User.objects.get(id=int(s.user)).first_name
+
+    return shout_list
 
 def profile_view(request):
-    profile = request.user.profile()
-    context_dict = {'profile':profile}
-    render(request, "shout/profile.html", context_dict)
+    loggedUser = request.user
+    profile = UserProfile.objects.get(user_id = loggedUser.id)
+    shout_list = Shouts.objects.filter(user=loggedUser.id).order_by("-shout_at")
+    print shout_list
+    shouts = change_time(shout_list)
+
+    context_dict = {'profile':profile,'user':loggedUser, 'shout_list':shouts}
+    return render(request, "shout/profile.html", context_dict)
