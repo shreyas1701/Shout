@@ -104,3 +104,8 @@ body{
 #eventForm .row{
 	margin-bottom: 10px;
 }
+
+#event_list{
+	padding: 0;
+	list-style: none; 
+}

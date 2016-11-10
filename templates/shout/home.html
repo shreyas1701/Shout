@@ -34,6 +34,7 @@
 						<div class="mg10">
 							<textarea class="shout_text form-control" placeholder="What's Happening?" name="shout"></textarea>	
 						</div>
+						<input type="hidden" name="pageName" value="home" />
 						<input type="submit" id="shoutBtn" value="Shout!" class="btn btn-large btn-primary pull-right" />
 						<div class="clear"></div>	
 					</form>					
@@ -56,8 +57,14 @@
 			<div class="wall">
 				<div class="newsfeed">
 					<h4>Upcoming Events</h4>
-					<ul>
-					</ul>
+					<div class="eventDiv">
+						<ul id="event_list">
+							{% for e in event_list %}
+								<li><a href="#">{{ e.event_name }}</a></li>
+							{% endfor %}
+						</ul>	
+					</div>
+					
 					<p><a href="/createEvent/" class="btn btn-large btn-primary">Create an event</a></p>
 				</div>
 			</div>

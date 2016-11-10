@@ -16,10 +16,10 @@ def index(request):
 def home(request):
     first_name = request.user.first_name
     shout_list = Shouts.objects.all().order_by('-shout_at')
-
+    event_list = Events.objects.all()
     shouts = change_time(shout_list)
-
-    return render(request, "shout/home.html",{"first_name":first_name, "shout_list":shouts})
+    ctx = {"first_name":first_name, "shout_list":shouts, "event_list":event_list}
+    return render(request, "shout/home.html",ctx)
 
 def register(request):
     registered = False
@@ -83,30 +83,21 @@ def events(request):
         event_name = request.POST["eventName"]
         event_descp = request.POST["eventDescription"]
         start_date = request.POST["startDate"]
-        st_date = ""
         end_date = request.POST["endDate"]
+        st_date = ""        
         en_date = ""
         location = request.POST["location"]
         invitees = request.POST.getlist('invitees')
         invitees = ','.join(invitees)
         
         try:
-            s_month = start_date[0:2]
-            s_date = start_date[3:5]
-            s_year = start_date[6:] 
-            st_date_string = s_year + '-' + s_month + '-' + s_date
-            st_date = datetime.datetime.strptime(st_date_string, '%Y-%m-%d')
-            e_month = end_date[0:2]
-            e_date = end_date[3:5]
-            e_year = end_date[6:] 
-            en_date_string = e_year + '-' + e_month + '-' + e_date
-            en_date = datetime.datetime.strptime(en_date_string, '%Y-%m-%d')        
-            eventObj = Events(event_name=event_name, event_descp=event_descp, start_date=st_date,end_date=en_date, username=request.user.first_name, location=location, invitees=invitees)
+            st_date = datetime.datetime.strptime(start_date, '%d/%m/%Y %H:%M:%S')
+            en_date = datetime.datetime.strptime(end_date, '%d/%m/%Y %H:%M:%S')        
+            eventObj = Events(event_name=event_name, event_descp=event_descp, start_date=st_date, end_date=en_date, username=request.user.first_name, location=location, invitees=invitees)
             eventObj.save()
         except Exception as e:
             cont = {"message":""+str(e)}
             return render(request, "shout/events.html", cont)
-
         
         return home(request)
     else:
