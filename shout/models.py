@@ -21,7 +21,9 @@ class Shouts(models.Model):
 
 class Events(models.Model):
     event_name = models.CharField(max_length=160)
-    event_descp = models.CharField(max_length=150)
+    event_descp = models.CharField(max_length=250)
+    location = models.CharField(max_length=200)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     username = models.CharField(max_length=150)
+    invitees = models.CharField(max_length=1000)
