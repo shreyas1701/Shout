@@ -7,17 +7,25 @@
 {% block body_block %}
 	<div class="container">
 		<h2>Create an Event</h2>
+        <p style="color:red">{{ message }}</p>
 		<form id="eventForm" method="post" action="/createEvent/">
 			{% csrf_token %}
 			<div class="row">
 				<div class="col-sm-6">
 					<input type="text" class="form-control" placeholder="Event Name" name="eventName" />
 				</div>
-				<div class="col-sm-6">
-					<textarea name="eventDescription" class="form-control" placeholder="Event Description"></textarea>
-				</div>
 			</div>
-			<div class="row" style="margin-top: 10px; margin-bottom: 10px;">
+            <div class="row">
+                <div class="col-sm-6">
+                    <textarea name="eventDescription" class="form-control" placeholder="Event Description"></textarea>
+                </div>    
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <input name="location" class="form-control" placeholder="Where?" />
+                </div>    
+            </div>
+			<div class="row">
 				<div class="col-sm-6">
 					<div class="form-group">
 						<div class="input-append date" id="datetimepicker">
@@ -27,26 +35,26 @@
 							</span>
 						</div>	
 					</div>
-					
-				</div>
-				<div class="col-sm-6">
-					<div class="form-group">
-						<div class="input-append date" id="datetimepicker1">
-							<input type="text" data-format="dd/MM/yyyy hh:mm:ss" name="endDate" class="form-control" placeholder="End Datetime" />
-							<span class="add-on">
-								<i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-							</span>
-						</div>	
-					</div>
 				</div>
 			</div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <div class="input-append date" id="datetimepicker1">
+                            <input type="text" data-format="dd/MM/yyyy hh:mm:ss" name="endDate" class="form-control" placeholder="End Datetime" />
+                            <span class="add-on">
+                                <i data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
+                            </span>
+                        </div>  
+                    </div>
+                </div>
+            </div>
 			<div class="row">
 				<div class="col-sm-6">
 					<select data-placeholder="Select People to invite" name="invitees" style="width: inherit" multiple class="chosen-select">
-						<option>Keerthana</option>
-						<option>Kalyan</option>
-						<option>Rahul</option>
-						<option>Lakshmi</option>
+						{% for user in users %}
+                            <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name}}</option>
+                        {% endfor %}
 					</select>
 				</div>
 			</div>
