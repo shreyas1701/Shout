@@ -109,3 +109,12 @@ body{
 	padding: 0;
 	list-style: none; 
 }
+.notif a{
+    padding: 5px !important;
+    margin: 5px;
+    border-bottom: 1px solid black;
+    cursor: pointer;
+    background: #f1f1f1;
+    display: block !important;
+    width: 200px;
+}

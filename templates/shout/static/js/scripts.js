@@ -9,10 +9,9 @@ $(document).ready(function(){
 	$("#username").focus();
 	$(".chosen-select").chosen({width: "95%"});
 
-	$("#datetimepicker").datetimepicker({
-		language: 'pt-BR'
+	$(".date").datepicker({
 	});
-	$("#datetimepicker1").datetimepicker({
-		language: 'pt-BR'
-	});
+
+	$(".time").timepicker();
+	
 });

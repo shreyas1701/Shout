@@ -11,7 +11,8 @@
 	<link href="//fonts.googleapis.com/css?family=Bitter" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href='{% static "css/styles.css" %}'>
 	<link rel="stylesheet" type="text/css" href='{% static "css/chosen.min.css" %}'>
-	<link rel="stylesheet" type="text/css" href='{% static "css/bootstrap-datetimepicker.min.css" %}'>
+	<link rel="stylesheet" type="text/css" href='{% static "css/bootstrap-datepicker.min.css" %}'>
+	<link rel="stylesheet" type="text/css" href='{% static "css/bootstrap-timepicker.css" %}'>
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-static-top">
@@ -26,9 +27,27 @@
 				<a class="navbar-brand" href="/">Shout</a>
 			</div>
 			<div id="navbar" class="navbar-collapse collapse">
-				{% block nav_block %}
-
-				{% endblock %}
+				{% if user.is_authenticated %}
+					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="glyphicon glyphicon-globe"></i> <span class="caret"></span></a>
+							<ul class="dropdown-menu notif">
+								<li>
+									<a href="#">
+										<p><strong>Upcoming Event</strong></p>
+										<p>Event Name - 10/12 @ 18:00</p>
+									</a>
+								</li>
+							</ul>
+						</li>
+						<li><a href="/logout/">Logout</a></li>
+					</ul>
+				{% else %}
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="/login/">Login</a></li>
+						<li><a href="/register/">Register</a></li>
+					</ul>
+				{% endif %}
 			</div><!--/.nav-collapse -->
 		</div>
 	</nav>
@@ -41,7 +60,8 @@
 	<script src='{% static "js/scripts.js" %}'></script>
 	<script src='{% static "js/homeScript.js" %}' ></script>
 	<script src='{% static "js/chosen.jquery.min.js" %}' ></script>
-	<script src='{% static "js/bootstrap-datetimepicker.min.js" %}' ></script>
+	<script src='{% static "js/bootstrap-datepicker.min.js" %}' ></script>
+	<script src='{% static "js/bootstrap-timepicker.js" %}' ></script>
 	
 </body>
 </html>
