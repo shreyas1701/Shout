@@ -10,4 +10,5 @@ urlpatterns = [
 	url(r'^shout/$', views.shout, name="shout"),
 	url(r'^createEvent/$', views.events, name="event"),
 	url(r'^profile/$', views.profile_view, name="profile"),
+	url(r'^notify/$', views.notify, name="notify"),
 ]

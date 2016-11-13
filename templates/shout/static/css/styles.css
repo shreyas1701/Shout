@@ -118,3 +118,21 @@ body{
     display: block !important;
     width: 200px;
 }
+
+.badge{
+    display: inline-block;
+    min-width: 10px;
+    padding: 3px 7px;
+    font-size: 7px;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    background-color: #f11616 !important;
+    border-radius: 10px;
+    position: relative !important;
+    left: -35px;
+    top: -10px;
+}

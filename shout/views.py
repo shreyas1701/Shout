@@ -1,9 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render,render_to_response
+from django.http import HttpResponse
 from .forms import UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from .models import UserProfile, Shouts, Events
+from django.template import RequestContext
+from django.core import serializers
 import datetime
+import json
 from django.utils.timezone import utc
 
 # Create your views here.
@@ -136,3 +140,15 @@ def profile_view(request):
 
     context_dict = {'profile':profile,'user':loggedUser, 'shout_list':shouts}
     return render(request, "shout/profile.html", context_dict)
+
+def notify(request):
+    context = RequestContext(request)
+    loggedUser = request.user
+    event_list = Events.objects.all()
+    final_list = []
+    for e in event_list:
+        if str(loggedUser.id) in str(e.invitees):
+            final_list.append(e)
+
+    data = serializers.serialize('json', final_list)
+    return HttpResponse(data)
