@@ -77,9 +77,9 @@ WSGI_APPLICATION = 'SSDIProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ssdi',
-        'USER': 'amrit',
-        'PASSWORD': '12345',
+        'NAME': 'shoutDB',
+        'USER': 'djangoUser',
+        'PASSWORD': 'kal143yan',
         'HOST': 'localhost',
         'PORT': '3306',
     }
