@@ -187,9 +187,10 @@ def notify(request):
 
 def edit_event(request, id):
     if request.method == "POST":
-        events(request)
+        return events(request)
     else:
         context_dict = {}
         event_obj = Events.objects.get(pk=id)
-        context_dict = {"current_event":event_obj}
+        users = User.objects.all()
+        context_dict = {"current_event":event_obj, "users":users}
         return render(request,'shout/edit_event.html', context_dict)
