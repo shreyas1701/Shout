@@ -1,0 +1,11 @@
+{% extends "basePage.html" %}
+
+{% block body_block %}
+    <ul>
+        {% for event in events.objects.all %}
+            <li>{{ event.event_name }}</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
+

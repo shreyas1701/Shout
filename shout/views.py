@@ -1,7 +1,9 @@
 from django.shortcuts import render,render_to_response
 from django.http import HttpResponse
+from .forms import UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from .models import UserProfile, Shouts, Events
 from django.template import RequestContext
 from django.utils.timezone import utc
 from django.core import serializers
@@ -9,6 +11,10 @@ import datetime
 import json
 from .forms import UserForm, UserProfileForm
 from .models import UserProfile, Shouts, Events
+from django.views.generic.edit import UpdateView
+from django.views import generic
+from django.utils.timezone import utc
+
 # Create your views here.
 def index(request):
     if request.user.is_authenticated:
@@ -87,25 +93,52 @@ def events(request):
         event_descp = request.POST["eventDescription"]
         start_date = request.POST["startDate"]
         end_date = request.POST["endDate"]
-        st_date = ""        
-        en_date = ""
+        startTime = request.POST["startTime"]
+        endTime = request.POST["endTime"]
         location = request.POST["location"]
         invitees = request.POST.getlist('invitees')
         invitees = ','.join(invitees)
-        
-        try:
-            st_date = datetime.datetime.strptime(start_date, '%d/%m/%Y %H:%M:%S')
-            en_date = datetime.datetime.strptime(end_date, '%d/%m/%Y %H:%M:%S')        
-            eventObj = Events(event_name=event_name, event_descp=event_descp, start_date=st_date, end_date=en_date, username=request.user.first_name, location=location, invitees=invitees)
-            eventObj.save()
-        except Exception as e:
-            cont = {"message":""+str(e)}
-            return render(request, "shout/events.html", cont)
-        
+        #print(startTime)
+        #start = start_date + " " + startTime
+        #end = end_date + " " + endTime
+        am_pm = startTime[-2:]
+        only_time = startTime[:-3]
+        start = start_date+"-"+only_time+":"+am_pm
+        am_pm_end = endTime[-2:]
+        only_time_end = endTime[:-3]
+        end = end_date+"-"+only_time_end+":"+am_pm_end
+        print(start)
+        #print end
+
+        st_date = datetime.datetime.strptime(start, '%m/%d/%Y-%I:%M:%p')
+        #dt = datetime.fromtimestamp(mktime(st_date))
+        print type(st_date)
+        en_date = datetime.datetime.strptime(end, '%m/%d/%Y-%I:%M:%p')
+        #print type(en_date)
+        eventObj = Events(event_name=event_name, event_descp=event_descp, start_date=st_date, end_date=en_date, username=request.user.first_name, location=location, invitees=invitees)
+        eventObj.save()
+        print ("i;m saved")
+        #except Exception as e:
+        #    cont = {"message": ""+str(e)}
+        #    return render(request, "shout/events.html", cont)
         return home(request)
     else:
         users = User.objects.all()
         return render(request, "shout/events.html", {'users':users})
+
+
+class eventsview(generic.ListView):
+    template_name = 'shout/myevents.html'
+    context_object_name = 'all_events'
+
+    def get_queryset(self):
+        return Events.objects.all()
+
+
+class editEvents(UpdateView):
+    model = Events
+    fields = ['event_name', 'event_descp', 'start_date', 'end_date', 'username', 'location', 'invitees']
+
 
 def change_time(shout_list):
     for s in shout_list:

@@ -25,5 +25,11 @@ class Events(models.Model):
     location = models.CharField(max_length=200)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
+    #st_date = models.
+    #en_date = models.TimeField()
     username = models.CharField(max_length=150)
     invitees = models.CharField(max_length=1000)
+
+    def __str__(self):
+        return 'Event name'.format(self.event_nme)
+
