@@ -11,4 +11,5 @@ urlpatterns = [
 	url(r'^createEvent/$', views.events, name="event"),
 	url(r'^profile/$', views.profile_view, name="profile"),
 	url(r'^notify/$', views.notify, name="notify"),
+	url(r'^edit_event/(?P<id>\d+)/$', views.edit_event, name='edit_event'),
 ]

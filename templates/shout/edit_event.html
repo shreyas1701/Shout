@@ -1,0 +1,77 @@
+{% extends "basePage.html" %}
+
+{% block body_block %}
+	<div class="container">
+		<div class="wall">
+			
+		<h2>Create an Event</h2>
+        <p style="color:red">{{ message }}</p>
+		<form id="eventForm" method="post" action="/edit_event/">
+			{% csrf_token %}
+			<div class="row">
+				<div class="col-sm-6">
+					<input type="text" class="form-control" placeholder="Event Name" name="eventName" value="{{ current_event.event_name }}" />
+				</div>
+			</div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <textarea name="eventDescription" class="form-control" placeholder="Event Description">{{ current_event.event_descp }}</textarea>
+                </div>    
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <input name="location" class="form-control" placeholder="Where?" value="{{ current_event.location }}" />
+                </div>    
+            </div>
+			<div class="row">
+				<div class="col-sm-4">				
+					<div class="input-group date">
+						<input type="text" data-format="dd/MM/yyyy" name="startDate" class="form-control" value="{{ current_event.start_date }}" placeholder="Start Datetime" />
+						<span class="input-group-addon">
+							<i class="glyphicon glyphicon-th"></i>
+						</span>
+					</div>
+				</div>
+				<div class="col-sm-2">
+					<div class="input-group">
+						<input type="text" data-format="hh:mm" name="startDate" class="form-control time" placeholder="Start Time" />
+						<span class="input-group-addon">
+							<i class="glyphicon glyphicon-time"></i>
+						</span>	
+					</div>
+				</div>
+			</div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="input-group date">
+						<input type="text" data-format="dd/MM/yyyy" name="endDate" class="form-control" value="{{ current_event.start_date }}" placeholder="End Datetime" />
+						<span class="input-group-addon">
+							<i class="glyphicon glyphicon-th"></i>
+						</span>
+					</div>
+                </div>
+                <div class="col-sm-2">
+					<div class="input-group">
+						<input type="text" data-format="hh:mm" name="startDate" class="form-control time" placeholder="End Time" />
+						<span class="input-group-addon">
+							<i class="glyphicon glyphicon-time"></i>
+						</span>	
+					</div>
+				</div>
+            </div>
+			<div class="row">
+				<div class="col-sm-6">
+					<select data-placeholder="Select People to invite" name="invitees" style="width: inherit" multiple class="chosen-select">
+						{% for user in users %}
+                            <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name}}</option>
+                        {% endfor %}
+					</select>
+				</div>
+			</div>
+			<br>
+			<input type="submit" class="btn btn-large btn-success" value="Update" />
+		</form>
+
+		</div>
+	</div>
+{% endblock %}

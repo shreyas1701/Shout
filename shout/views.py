@@ -1,15 +1,14 @@
 from django.shortcuts import render,render_to_response
 from django.http import HttpResponse
-from .forms import UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from .models import UserProfile, Shouts, Events
 from django.template import RequestContext
+from django.utils.timezone import utc
 from django.core import serializers
 import datetime
 import json
-from django.utils.timezone import utc
-
+from .forms import UserForm, UserProfileForm
+from .models import UserProfile, Shouts, Events
 # Create your views here.
 def index(request):
     if request.user.is_authenticated:
@@ -20,7 +19,7 @@ def index(request):
 def home(request):
     first_name = request.user.first_name
     shout_list = Shouts.objects.all().order_by('-shout_at')
-    event_list = Events.objects.all()
+    event_list = Events.objects.all().order_by('-start_date')
     shouts = change_time(shout_list)
     ctx = {"first_name":first_name, "shout_list":shouts, "event_list":event_list}
     return render(request, "shout/home.html",ctx)
@@ -152,3 +151,12 @@ def notify(request):
 
     data = serializers.serialize('json', final_list)
     return HttpResponse(data)
+
+def edit_event(request, id):
+    if request.method == "POST":
+        events(request)
+    else:
+        context_dict = {}
+        event_obj = Events.objects.get(pk=id)
+        context_dict = {"current_event":event_obj}
+        return render(request,'shout/edit_event.html', context_dict)

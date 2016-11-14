@@ -56,7 +56,12 @@
 					<div class="eventDiv">
 						<ul id="event_list">
 							{% for e in event_list %}
-								<li><a href="#">{{ e.event_name }}</a></li>
+								<li>{{ e.event_name }} 
+								{% if user.first_name == e.username %}
+									<a href="{% url 'edit_event' e.id  %}"><i class="glyphicon glyphicon-pencil"></i>
+									</a>
+								{% endif %}
+								</li>
 							{% endfor %}
 						</ul>	
 					</div>
