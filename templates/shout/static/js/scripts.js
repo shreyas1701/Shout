@@ -8,12 +8,16 @@ $(document).ready(function(){
 	});
 
 	$(".time").timepicker();
-	notify("fromStart");
+	notify();
+	
+	
 	setInterval(function(){
-		notify("normal");
-	},5*1000*60);
+		notify();
+	},10*1000);
+	
 	
 	$(".dropdown").click(function(){
+		updateSeen();
 		$(".badge").hide();
 	});
 
@@ -25,37 +29,49 @@ function notify(frmwh){
 		type: 'get', 
 		datatype: 'json',
 		success: function(data) {
-			var prev = $(".notif li").length;
-
+			var obj = JSON.parse(data.replace(/'/g, '"'));
+			console.log(obj);
 			$(".notif").html("");
 			$(".notif").html('<li style="margin-left: 10px"><p><strong>Upcoming Events</strong></p></li>');
-			var dataArr = data.split("{");
-			for(var i=2; i<dataArr.length;i=i+2){
-				var event = dataArr[i].split(",");
-				st_date = event[3].split(": ")[1];
-				var datsplt = st_date.split("T");
-				var eventName = event[0].split(":")[1];
-				eventName = eventName.replace(/['"]+/g, '');
-				notifHtml = '<li><p><a href="#">'+eventName+' - '+datsplt[0].substring(datsplt[0].indexOf("-")+1)+' @ '+datsplt[1].substring(0,5)+'</a></p></li>';
+			var seenFlag = false;
+			for(var i=0; i<obj.length;i++){
+
+				var bgText = "style='background:#f1f1f1'"
+				if(obj[i].seen === "True"){
+					notifHtml = '<li><p><a href="#">'+obj[i].notif_text+'</a></p></li>';
+				}else{
+					seenFlag = true;
+					notifHtml = '<li><p><a href="#" '+bgText+' >'+obj[i].notif_text+'</a></p></li>';
+				}
+				
 				$(".notif").append(notifHtml);
 			}
 
-			var pres = $(".notif li").length;
 
-			if(frmwh === "normal"){
-				if(pres > prev){
-					$(".badge").show();
-				}else{
-					$(".badge").hide();
-				}	
+			if(seenFlag){
+				$(".badge").show();
 			}else{
 				$(".badge").hide();
 			}
 			
-			
 		},
-		failure: function(data) { 
-			alert('Got an error dude');
+		error: function(data) { 
+			console.log("error");
+			console.log(data);
+		}
+	});
+}
+
+function updateSeen() {
+	$.ajax({
+		url: '/updateSeen/',
+		type: 'get', 
+		datatype: 'json',
+		success: function(data) {
+			console.log(data);
+		},
+		error: function(data) { 
+			//alert('Got an error dude');
 		}
 	});
 }

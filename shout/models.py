@@ -25,11 +25,20 @@ class Events(models.Model):
     location = models.CharField(max_length=200)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    #st_date = models.
-    #en_date = models.TimeField()
     username = models.CharField(max_length=150)
     invitees = models.CharField(max_length=1000)
 
     def __str__(self):
         return 'Event name'.format(self.event_nme)
 
+class Notification(models.Model):
+    notif_text = models.CharField(max_length=300)
+    when = models.DateTimeField()
+    
+class NotifMap(models.Model):
+    user = models.CharField(max_length=100)
+    notif = models.ForeignKey(Notification)
+    seen = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return self.notif.notif_text

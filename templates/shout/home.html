@@ -58,7 +58,7 @@
 							{% for e in event_list %}
 								<li>{{ e.event_name }} 
 								{% if user.first_name == e.username %}
-									<a href="{% url 'edit_event' e.id  %}"><i class="glyphicon glyphicon-pencil"></i>
+									<a href="{% url 'edit_event' e.id  %}"><i class="fa fa-pencil"></i>
 									</a>
 								{% endif %}
 								</li>

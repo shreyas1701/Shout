@@ -10,7 +10,7 @@ from django.core import serializers
 import datetime
 import json
 from .forms import UserForm, UserProfileForm
-from .models import UserProfile, Shouts, Events
+from .models import *
 from django.views.generic.edit import UpdateView
 from django.views import generic
 from django.utils.timezone import utc
@@ -98,46 +98,22 @@ def events(request):
         location = request.POST["location"]
         invitees = request.POST.getlist('invitees')
         invitees = ','.join(invitees)
-        #print(startTime)
-        #start = start_date + " " + startTime
-        #end = end_date + " " + endTime
         am_pm = startTime[-2:]
         only_time = startTime[:-3]
         start = start_date+"-"+only_time+":"+am_pm
         am_pm_end = endTime[-2:]
         only_time_end = endTime[:-3]
         end = end_date+"-"+only_time_end+":"+am_pm_end
-        print(start)
-        #print end
-
-        st_date = datetime.datetime.strptime(start, '%m/%d/%Y-%I:%M:%p')
-        #dt = datetime.fromtimestamp(mktime(st_date))
-        print type(st_date)
+        st_date = datetime.datetime.strptime(start, '%m/%d/%Y-%I:%M:%p')        
         en_date = datetime.datetime.strptime(end, '%m/%d/%Y-%I:%M:%p')
-        #print type(en_date)
+        
         eventObj = Events(event_name=event_name, event_descp=event_descp, start_date=st_date, end_date=en_date, username=request.user.first_name, location=location, invitees=invitees)
         eventObj.save()
-        print ("i;m saved")
-        #except Exception as e:
-        #    cont = {"message": ""+str(e)}
-        #    return render(request, "shout/events.html", cont)
+        create_notif(invitees.split(","), "events", eventObj)
         return home(request)
     else:
         users = User.objects.all()
         return render(request, "shout/events.html", {'users':users})
-
-
-class eventsview(generic.ListView):
-    template_name = 'shout/myevents.html'
-    context_object_name = 'all_events'
-
-    def get_queryset(self):
-        return Events.objects.all()
-
-
-class editEvents(UpdateView):
-    model = Events
-    fields = ['event_name', 'event_descp', 'start_date', 'end_date', 'username', 'location', 'invitees']
 
 
 def change_time(shout_list):
@@ -163,27 +139,48 @@ def change_time(shout_list):
 
     return shout_list
 
+def create_notif(ppl_list, type, obj):
+    when = datetime.datetime.now()
+    notif_text = ""
+    if type == "events":
+        notif_text = ""+str(obj.username)+" has invited you to: "+str(obj.event_name)
+
+    elif type == "likes":
+        notif_text = ""+str(obj.username)+" has liked your shout"
+
+    elif type == "comments":
+        notif_text = ""+str(obj.username)+" has commented on your shout"
+
+    notif_obj = Notification(notif_text = notif_text, when=when)
+    notif_obj.save()
+
+    for x in ppl_list:
+        user = x
+        nm_obj = NotifMap(user = user, notif = notif_obj, seen=False)
+        nm_obj.save()
+
 def profile_view(request):
     loggedUser = request.user
     profile = UserProfile.objects.get(user_id = loggedUser.id)
     shout_list = Shouts.objects.filter(user=loggedUser.id).order_by("-shout_at")
-    print shout_list
+    
     shouts = change_time(shout_list)
 
     context_dict = {'profile':profile,'user':loggedUser, 'shout_list':shouts}
     return render(request, "shout/profile.html", context_dict)
 
 def notify(request):
-    context = RequestContext(request)
-    loggedUser = request.user
-    event_list = Events.objects.all()
+    notMapObj = NotifMap.objects.filter(user=request.user.id)
     final_list = []
-    for e in event_list:
-        if str(loggedUser.id) in str(e.invitees):
-            final_list.append(e)
+    for x in notMapObj:
+        
+        notif_text = Notification.objects.get(id=x.notif.id).notif_text
+        seen = x.seen
 
-    data = serializers.serialize('json', final_list)
-    return HttpResponse(data)
+        final_list.append({"notif_text":str(notif_text), "seen":""+str(seen)})
+
+    
+    return HttpResponse(str(final_list))
 
 def edit_event(request, id):
     if request.method == "POST":
@@ -194,3 +191,13 @@ def edit_event(request, id):
         users = User.objects.all()
         context_dict = {"current_event":event_obj, "users":users}
         return render(request,'shout/edit_event.html', context_dict)
+
+def updateSeen(request):
+    notMapObj = NotifMap.objects.filter(user=request.user.id)
+    
+    for x in notMapObj:
+        if not x.seen:
+            x.seen = True
+            x.save()
+
+    return HttpResponse("success")
