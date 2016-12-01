@@ -12,10 +12,18 @@
 		<div class="col-md-8">
 			<div class="wall">
 				<div class="userProfile">
-					<h3>{{ user.first_name }} {{ user.last_name }}</h3>
-					<p><a href="{% url 'profile' user.id  %}">${{ user.username }}</a></p>
+					<h3>{{ user_prof.first_name }} {{ user_prof.last_name }}</h3>
+					<p><a href="{% url 'profile' user_prof.id  %}">${{ user_prof.username }}</a></p>
 					<h4>{{ profile.bio }}</h4>
-					<button href="#" class="btn btn-large btn-primary pull-right">Follow</button>
+					{% if user.id != user_prof.id %}
+						<a href="{% url 'follow' user_prof.id  %}" class="btn btn-large btn-primary pull-right">
+							{% if following %}
+								Unfollow
+							{% else %}
+								Follow
+							{% endif %}
+						</a>
+					{% endif %}
 				</div>
 				<div class="clear"></div>
 			</div>	

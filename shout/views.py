@@ -1,4 +1,4 @@
-from django.shortcuts import render,render_to_response
+from django.shortcuts import render,render_to_response, get_object_or_404
 from django.http import HttpResponse
 from .forms import UserForm, UserProfileForm
 from django.contrib.auth import authenticate, login, logout
@@ -23,8 +23,16 @@ def index(request):
         return render(request, "shout/index.html")
 
 def home(request):
-    first_name = request.user.first_name
-    shout_list = Shouts.objects.all().order_by('-shout_at')
+    loggedUser = request.user
+    first_name = loggedUser.first_name
+    flw_list = FollowMap.objects.filter(follower=loggedUser.id)
+    
+    shout_list = []
+    for x in flw_list:
+        shous = Shouts.objects.filter(user=x.following).order_by('-shout_at')
+        for y in shous:
+            shout_list.append(y)
+
     event_list = Events.objects.all().order_by('-start_date')
     shouts = change_time(shout_list)
     shouts_num = len(Shouts.objects.filter(user=request.user.id))
@@ -166,8 +174,16 @@ def profile_view(request, id):
     shout_list = Shouts.objects.filter(user=id).order_by("-shout_at")
     user_prof = User.objects.get(id=id)
     shouts = change_time(shout_list)
+    following = False
+    try:
+        flwMp = FollowMap.objects.get(follower=loggedUser.id)
+    except FollowMap.DoesNotExist:
+        flwMp = None
 
-    context_dict = {'profile':profile,'loggedUser':loggedUser, "user":user_prof, 'shout_list':shouts}
+    if flwMp:
+        following = True
+
+    context_dict = {'profile':profile,'loggedUser':loggedUser, "user_prof":user_prof, 'shout_list':shouts, "following":following}
     return render(request, "shout/profile.html", context_dict)
 
 def notify(request):
@@ -213,9 +229,19 @@ def hashResults(request):
 
 def followUser(request, id):
     
-    loggedUser = request.user
+    loggedUser = request.user.id
     flwngUser = User.objects.get(id=id)
-    if flwngUser:
-        print flwngUser
-        follow = FollowMap(follower=loggedUser.id, following=id)
-        follow.save()
+    try:
+        flwMp = FollowMap.objects.get(follower=loggedUser)
+    except FollowMap.DoesNotExist:
+        flwMp = None
+
+    if flwMp:
+        flwMp.delete();    
+    else:
+        if flwngUser:
+            print flwngUser
+            follow = FollowMap(follower=loggedUser, following=id)
+            follow.save()
+
+    return profile_view(request, id)

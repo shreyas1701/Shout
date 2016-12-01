@@ -14,4 +14,5 @@ urlpatterns = [
     url(r'^edit_event/(?P<id>\d+)/$', views.edit_event, name='edit_event'),
     url(r'^updateSeen/$', views.updateSeen, name="updateSeen"),
     url(r'^hashtag/$', views.hashResults, name="hashResults"),
+    url(r'^follow/(?P<id>\d+)/$', views.followUser, name="follow"),
 ]
