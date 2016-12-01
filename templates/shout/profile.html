@@ -9,13 +9,15 @@
 <div class="container">
 
 	<div class="row">
-		<div class="col-md-12">
+		<div class="col-md-8">
 			<div class="wall">
 				<div class="userProfile">
 					<h3>{{ user.first_name }} {{ user.last_name }}</h3>
-					<p><a href="/profile/">${{ user.username }}</a></p>
+					<p><a href="{% url 'profile' user.id  %}">${{ user.username }}</a></p>
 					<h4>{{ profile.bio }}</h4>
+					<button href="#" class="btn btn-large btn-primary pull-right">Follow</button>
 				</div>
+				<div class="clear"></div>
 			</div>	
 		</div>
 	</div>
@@ -39,7 +41,7 @@
 				<div class="shouts">
 				{% for q in shout_list %}
 					<div class="shout">
-						<h4><a href="#">{{ q.user }}</a></h4>
+						<h4><a href="{% url 'profile' q.user  %}">{{ q.username }}</a></h4>
 						<p class="shout_text">{{ q.shout }}</p>
 						<p class="timestamp pull-right">{{ q.shout_at }}</p>
 						<div class="clear"></div>

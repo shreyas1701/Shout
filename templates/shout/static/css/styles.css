@@ -78,6 +78,13 @@ body{
 	padding:10px 10px 10px 5px;
 }
 
+.stats li span{
+	font-size: 16px !important;
+	position: relative;
+    left: -21px;
+    top: 17px;
+}
+
 .shouts{
 	margin: 10px;
 }
@@ -135,3 +142,18 @@ body{
     left: -35px;
     top: -10px;
 }
+
+.licom a{
+	font-size: 12px !important;
+}
+
+.licom{
+	font-size: 85%;
+}
+
+.box{
+	border-radius: 10px;
+	background:#eaf8fc;
+	padding:10px;
+}
+

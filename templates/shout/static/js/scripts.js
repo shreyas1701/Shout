@@ -8,9 +8,8 @@ $(document).ready(function(){
 	});
 
 	$(".time").timepicker();
+	
 	notify();
-	
-	
 	setInterval(function(){
 		notify();
 	},10*1000);
@@ -30,11 +29,11 @@ function notify(frmwh){
 		datatype: 'json',
 		success: function(data) {
 			var obj = JSON.parse(data.replace(/'/g, '"'));
-			console.log(obj);
+			//console.log(obj);
 			$(".notif").html("");
 			$(".notif").html('<li style="margin-left: 10px"><p><strong>Upcoming Events</strong></p></li>');
 			var seenFlag = false;
-			for(var i=0; i<obj.length;i++){
+			for (var i = obj.length - 1; i >= 0; i--) {
 
 				var bgText = "style='background:#f1f1f1'"
 				if(obj[i].seen === "True"){
@@ -71,7 +70,8 @@ function updateSeen() {
 			console.log(data);
 		},
 		error: function(data) { 
-			//alert('Got an error dude');
+			console.log('Got an error dude');
+			console.log(data);
 		}
 	});
 }

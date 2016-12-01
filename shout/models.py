@@ -42,3 +42,9 @@ class NotifMap(models.Model):
 
     def __unicode__(self):
         return self.notif.notif_text
+
+class FollowMap(models.Model):
+    
+    follower = models.CharField(max_length=100)
+    following = models.CharField(max_length=100)
+    

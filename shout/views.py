@@ -27,7 +27,8 @@ def home(request):
     shout_list = Shouts.objects.all().order_by('-shout_at')
     event_list = Events.objects.all().order_by('-start_date')
     shouts = change_time(shout_list)
-    ctx = {"first_name":first_name, "shout_list":shouts, "event_list":event_list}
+    shouts_num = len(Shouts.objects.filter(user=request.user.id))
+    ctx = {"first_name":first_name, "shout_list":shouts, "event_list":event_list, "shouts_num":shouts_num}
     return render(request, "shout/home.html",ctx)
 
 def register(request):
@@ -135,7 +136,7 @@ def change_time(shout_list):
         else:
             s.shout_at = str(int(c/86400))+"d"
 
-        s.user = User.objects.get(id=int(s.user)).first_name
+        s.username = User.objects.get(id=int(s.user)).first_name
 
     return shout_list
 
@@ -159,14 +160,14 @@ def create_notif(ppl_list, type, obj):
         nm_obj = NotifMap(user = user, notif = notif_obj, seen=False)
         nm_obj.save()
 
-def profile_view(request):
+def profile_view(request, id):
     loggedUser = request.user
-    profile = UserProfile.objects.get(user_id = loggedUser.id)
-    shout_list = Shouts.objects.filter(user=loggedUser.id).order_by("-shout_at")
-    
+    profile = UserProfile.objects.get(user_id = id)
+    shout_list = Shouts.objects.filter(user=id).order_by("-shout_at")
+    user_prof = User.objects.get(id=id)
     shouts = change_time(shout_list)
 
-    context_dict = {'profile':profile,'user':loggedUser, 'shout_list':shouts}
+    context_dict = {'profile':profile,'loggedUser':loggedUser, "user":user_prof, 'shout_list':shouts}
     return render(request, "shout/profile.html", context_dict)
 
 def notify(request):
@@ -201,3 +202,20 @@ def updateSeen(request):
             x.save()
 
     return HttpResponse("success")
+
+def hashResults(request):
+
+    first_name = request.user.first_name
+    shouts_num = len(Shouts.objects.filter(user=request.user.id))
+    cont = {"first_name":first_name,"shouts_num":shouts_num}
+
+    return render(request, "shout/hashResults.html",cont)
+
+def followUser(request, id):
+    
+    loggedUser = request.user
+    flwngUser = User.objects.get(id=id)
+    if flwngUser:
+        print flwngUser
+        follow = FollowMap(follower=loggedUser.id, following=id)
+        follow.save()

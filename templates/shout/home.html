@@ -6,12 +6,12 @@
 		<div class="col-md-3">
 			<div class="wall">
 				<div class="userProfile">
-					<h3><a href="/profile/">{{ first_name }}</a></h3>
+					<h3><a href="{% url 'profile' user.id  %}">{{ first_name }}</a></h3>
 					<div class="userInfo">
 						<ul class="stats">
-							<li><a href="#">Shouts</a></li>
-							<li><a href="#">Followers</a></li>
-							<li><a href="#">Following</a></li>
+							<li><a href="{% url 'profile' user.id  %}">Shouts<span>{{ shouts_num }}</span></a></li>
+							<li><a href="{% url 'profile' user.id  %}">Followers<span>0</span></a></li>
+							<li><a href="{% url 'profile' user.id  %}">Following<span>0</span></a></li>
 						</ul>
 					</div>
 				</div>
@@ -38,10 +38,16 @@
 				<div class="shouts">
 				{% for q in shout_list %}
 					<div class="shout">
-						<h4><a href="/profile/">{{ q.user }}</a></h4>
+						<h4><a href="{% url 'profile' q.user  %}">{{ q.username }}</a></h4>
 						<p class="shout_text">{{ q.shout }}</p>
 						<p class="timestamp pull-right">{{ q.shout_at }}</p>
 						<div class="clear"></div>
+						<p class="licom">
+							<span><a href="#">Like <i class="fa fa-thumbs-up" aria-hidden="true"></i></a></span>&nbsp;
+							{% if q.like_num > 0 %}
+								<span>{{ q.like_num }} people like this</span>
+							{% endif %}
+						</p>
 					</div>
 				{% endfor %}
 				</div>
@@ -56,7 +62,7 @@
 					<div class="eventDiv">
 						<ul id="event_list">
 							{% for e in event_list %}
-								<li>{{ e.event_name }} 
+								<li>{{ e.event_name }}
 								{% if user.first_name == e.username %}
 									<a href="{% url 'edit_event' e.id  %}"><i class="fa fa-pencil"></i>
 									</a>
