@@ -7,12 +7,13 @@
 		<div class="col-md-3">
 			<div class="wall">
 				<div class="userProfile">
-					<h3><a href="/profile/">{{ first_name }}</a></h3>
+					<h3><a href="{% url 'profile' user.id  %}">{{ user.first_name }}</a></h3>
 					<div class="userInfo">
+					<input type="hidden" id="hashText" value="{{ hashText }}">
 						<ul class="stats">
-							<li><a href="/profile/">Shouts<span>{{ shouts_num }}</span></a></li>
-							<li><a href="/profile/">Followers<span>0</span></a></li>
-							<li><a href="/profile/">Following<span>0</span></a></li>
+							<li><a href="{% url 'profile' user.id  %}">Shouts<span>{{ shouts_num }}</span></a></li>
+							<li><a href="{% url 'profile' user.id  %}">Followers<span>{{ follower }}</span></a></li>
+							<li><a href="{% url 'profile' user.id  %}">Following<span>{{ following }}</span></a></li>
 						</ul>
 					</div>
 				</div>
@@ -22,38 +23,21 @@
 		</div>
 		<div class="col-md-6">
 			<div class="wall">
-				<div class="event_hash">
-
-					<div class="container">
-						<div class="row">
-							<h3>Related Events: </h3>
-							<div class="col-md-2 box">
-								<h4>Event Name</h4>
-								<p>Event Description</p>
-								<button class="btn btn-large btn-primary">See More!</button>
-							</div>
+				<div class="event_hash" style="padding:12px">
+					<div class="row">
+						<h3>Related Events: </h3>
+						<div class="col-md-4 box">
+							<h4>Event Name</h4>
+							<p>Event Description</p>
+							<button class="btn btn-large btn-primary">See More!</button>
 						</div>
 					</div>
-					
 				</div>
 				<hr/>
 				<div class="shouts_hash">
 					<h3>Related Shouts:</h3>
-					<div class="shouts">
-						{% for q in shout_list %}
-							<div class="shout">
-								<h4><a href="/profile/">{{ q.user }}</a></h4>
-								<p class="shout_text">{{ q.shout }}</p>
-								<p class="timestamp pull-right">{{ q.shout_at }}</p>
-								<div class="clear"></div>
-								<p class="licom">
-									<span><a href="#">Like <i class="fa fa-thumbs-up" aria-hidden="true"></i></a></span>&nbsp;
-									{% if q.like_num > 0 %}
-										<span>{{ q.like_num }} people like this</span>
-									{% endif %}
-								</p>
-							</div>
-						{% endfor %}
+					<div id="hashShouts" class="shouts">
+						
 					</div>
 				</div>
 			</div>
@@ -64,5 +48,4 @@
 		</div>
 	</div>
 </div>
-
 {% endblock %}

@@ -15,9 +15,10 @@ class UserProfile(models.Model):
         return 'Profile of user: {}'.format(self.user.username)
 
 class Shouts(models.Model):
-	shout = models.CharField(max_length=160)
-	user = models.CharField(max_length=150)
-	shout_at = models.DateTimeField(max_length=50)
+    shout = models.CharField(max_length=160)
+    user = models.CharField(max_length=150)
+    shout_at = models.DateTimeField(max_length=50)
+    likes = models.IntegerField(default=0)
 
 class Events(models.Model):
     event_name = models.CharField(max_length=160)
@@ -43,8 +44,10 @@ class NotifMap(models.Model):
     def __unicode__(self):
         return self.notif.notif_text
 
-class FollowMap(models.Model):
-    
+class FollowMap(models.Model):    
     follower = models.CharField(max_length=100)
     following = models.CharField(max_length=100)
-    
+
+class Likers(models.Model):
+    liker = models.CharField(max_length=100)
+    shout_id = models.CharField(max_length=100)

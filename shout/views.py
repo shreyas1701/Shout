@@ -24,19 +24,13 @@ def index(request):
 
 def home(request):
     loggedUser = request.user
-    first_name = loggedUser.first_name
-    flw_list = FollowMap.objects.filter(follower=loggedUser.id)
     
-    shout_list = []
-    for x in flw_list:
-        shous = Shouts.objects.filter(user=x.following).order_by('-shout_at')
-        for y in shous:
-            shout_list.append(y)
-
     event_list = Events.objects.all().order_by('-start_date')
-    shouts = change_time(shout_list)
+    #shouts = change_time(shout_list)
     shouts_num = len(Shouts.objects.filter(user=request.user.id))
-    ctx = {"first_name":first_name, "shout_list":shouts, "event_list":event_list, "shouts_num":shouts_num}
+    follower = len(FollowMap.objects.filter(following=loggedUser.id))
+    following = len(FollowMap.objects.filter(follower=loggedUser.id))
+    ctx = {"event_list":event_list, "shouts_num":shouts_num, "follower":follower, "following":following}
     return render(request, "shout/home.html",ctx)
 
 def register(request):
@@ -88,7 +82,7 @@ def shout(request):
         shoutObj = Shouts(shout=shout_text, user=request.user.id, shout_at=datetime.datetime.utcnow().replace(tzinfo=utc))  
         shoutObj.save()
         if page == "profile":
-            return profile_view(request)
+            return profile_view(request, request.user.id)
         else:
             return home(request)
 
@@ -155,10 +149,7 @@ def create_notif(ppl_list, type, obj):
         notif_text = ""+str(obj.username)+" has invited you to: "+str(obj.event_name)
 
     elif type == "likes":
-        notif_text = ""+str(obj.username)+" has liked your shout"
-
-    elif type == "comments":
-        notif_text = ""+str(obj.username)+" has commented on your shout"
+        notif_text = ""+str(User.objects.get(id=obj.liker).first_name)+" has liked your shout"
 
     notif_obj = Notification(notif_text = notif_text, when=when)
     notif_obj.save()
@@ -200,14 +191,46 @@ def notify(request):
     return HttpResponse(str(final_list))
 
 def edit_event(request, id):
-    if request.method == "POST":
-        return events(request)
-    else:
         context_dict = {}
-        event_obj = Events.objects.get(pk=id)
+        event_obj = Events.objects.get(pk=id)       
+        st_date = event_obj.start_date.date()
+        st_date = st_date.strftime('%m/%d/%Y')
+        en_date = event_obj.end_date.date()
+        en_date = en_date.strftime('%m/%d/%Y')
+        st_time = event_obj.start_date.time()
+        en_time = event_obj.end_date.time()
         users = User.objects.all()
-        context_dict = {"current_event":event_obj, "users":users}
-        return render(request,'shout/edit_event.html', context_dict)
+        context_dict = {"current_event": event_obj, "users": users, "st_date":st_date, "en_date" :en_date,"st_time":st_time, "en_time" :en_time}
+        return render(request, 'shout/edit_event.html', context_dict)
+
+
+def updateevent(request):
+    if request.method == "POST":
+        id = request.POST["eventID"]
+        eventobj = Events.objects.get(id=id)
+        eventobj.event_name = request.POST["eventName"]
+        eventobj.event_descp = request.POST["eventDescription"]
+        start_date = request.POST["startDate"]
+        end_date = request.POST["endDate"]
+        startTime = request.POST["startTime"]
+        endTime = request.POST["endTime"]
+        eventobj.location = request.POST["location"]
+        invitees = request.POST.getlist('invitees')
+        eventobj.invitees = ','.join(invitees)
+        am_pm = startTime[-2:]
+        only_time = startTime[:-3]
+        start = start_date+"-"+only_time+":"+am_pm
+        am_pm_end = endTime[-2:]
+        only_time_end = endTime[:-3]
+        end = end_date+"-"+only_time_end+":"+am_pm_end
+        st_date = datetime.datetime.strptime(start, '%m/%d/%Y-%I:%M:%p')
+        en_date = datetime.datetime.strptime(end, '%m/%d/%Y-%I:%M:%p')
+        eventobj.start_date = st_date
+        eventobj.end_date = en_date
+
+        eventobj.save()
+        #create_notif(invitees.split(","), "events", eventobj)
+        return home(request)
 
 def updateSeen(request):
     notMapObj = NotifMap.objects.filter(user=request.user.id)
@@ -219,11 +242,15 @@ def updateSeen(request):
 
     return HttpResponse("success")
 
-def hashResults(request):
+def hashResults(request, text):
 
-    first_name = request.user.first_name
-    shouts_num = len(Shouts.objects.filter(user=request.user.id))
-    cont = {"first_name":first_name,"shouts_num":shouts_num}
+    loggedUser= request.user
+
+    shouts_num = len(Shouts.objects.filter(user=loggedUser.id))
+    follower = len(FollowMap.objects.filter(following=loggedUser.id))
+    following = len(FollowMap.objects.filter(follower=loggedUser.id))
+
+    cont = {"shouts_num":shouts_num,"follower":follower, "following":following, "hashText":text}
 
     return render(request, "shout/hashResults.html",cont)
 
@@ -245,3 +272,88 @@ def followUser(request, id):
             follow.save()
 
     return profile_view(request, id)
+
+def like(request):
+    loggedUser = request.user.id
+    id = request.POST["id"]
+    shout = Shouts.objects.get(id=id)
+    likes = Likers(liker = loggedUser, shout_id=id )
+    likes.save()
+    shout.likes += 1
+    shout.save()
+    create_notif(shout.user, "likes", likes)
+    return HttpResponse("Success")
+
+def unlike(request):
+    loggedUser = request.user.id
+    id = request.POST["id"]
+    shout = Shouts.objects.get(id=id)
+    likes = Likers.objects.get(liker = loggedUser, shout_id=id )
+    likes.delete()
+    shout.likes -= 1
+    shout.save()
+    return HttpResponse("Success")
+
+def getShouts(request):
+    loggedUser = request.user
+    location = request.POST["location"]
+    shout_list = []
+
+    if location == "home":
+        flw_list = FollowMap.objects.filter(follower=loggedUser.id)
+        for i in Shouts.objects.filter(user=loggedUser.id).order_by('-shout_at'):
+            shout_list.append(i)
+
+        for x in flw_list:
+            shous = Shouts.objects.filter(user=x.following).order_by('-shout_at')
+            for y in shous:
+                shout_list.append(y)
+
+
+    elif location == "profile":
+        for i in Shouts.objects.filter(user=loggedUser.id).order_by('-shout_at'):
+            shout_list.append(i)
+
+    elif location == "hashtag":
+        hashText = request.POST["hashText"]
+        for i in Shouts.objects.filter(shout__contains = hashText).order_by("-shout_at"):
+            shout_list.append(i)
+
+    shouts = change_time(shout_list)
+    print shouts
+    shoutList = []
+    for x in shouts:
+        liked = False
+        if Likers.objects.filter(liker=loggedUser.id, shout_id=x.id):
+            liked = True
+
+        shoutList.append(objToDict(x, liked))
+
+    return HttpResponse(str(shoutList))
+
+def objToDict(obj, liked):
+
+    objDict = {}
+    shout_text = str(obj.shout).replace("'", "%")
+    objDict["id"] = int(obj.id)
+    objDict["shout"] = shout_text
+    objDict["user"] = str(obj.user)
+    objDict["shout_at"] = obj.shout_at
+    objDict["likes"] = int(obj.likes)
+    objDict["username"] = str(obj.username)
+    objDict["liked"] = str(liked)
+
+    return objDict
+
+def event_info(request, id):
+
+    event_obj = Events.objects.get(pk=id)
+    context_dict = {"event": event_obj}
+    return render(request, 'shout/event_info.html', context_dict)
+
+def myevents(request):
+
+    myevent = Events.objects.filter(username=request.user.first_name)
+    context = {"event_list": myevent}
+
+    return render(request, "shout/myevents.html", context)

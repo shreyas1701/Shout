@@ -143,7 +143,13 @@ body{
     top: -10px;
 }
 
-.licom a{
+.likeShout{
+	font-size: 12px !important;
+	color:#1e1e1e;
+}
+
+.likedShout{
+	color:#23527c;
 	font-size: 12px !important;
 }
 

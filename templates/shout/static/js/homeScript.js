@@ -11,5 +11,25 @@ $(document).ready(function(){
 		}
 	});
 
-	
+	$(".licom a").click(function(e){
+		var id = $(this).attr("id");
+		likeShout(id);
+		e.preventDefault();
+	});
+
 });
+
+
+function likeShout(id) {
+	$.ajax({
+		url: '/like/'+id,
+		type: 'get', 
+		datatype: 'json',
+		success: function(data) {
+			console.log(data);
+		},
+		error: function(data){
+			console.log(data);
+		}
+	});
+}

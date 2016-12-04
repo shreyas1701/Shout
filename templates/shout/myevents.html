@@ -1,11 +1,40 @@
 {% extends "basePage.html" %}
 
 {% block body_block %}
-    <ul>
-        {% for event in events.objects.all %}
-            <li>{{ event.event_name }}</li>
-        {% endfor %}
-    </ul>
+<div class="container">
+	<div class="row">
+		<div class="col-md-3">
+			<div class="wall">
+				<div class="userProfile">
+					<h3><a href="{% url 'profile' user.id  %}">{{ user.first_name }}</a></h3>
+					<div class="userInfo">
+						<ul class="stats">
+							<li><a href="{% url 'profile' user.id  %}">Shouts<span>{{ shouts_num }}</span></a></li>
+							<li><a href="{% url 'profile' user.id  %}">Followers<span>{{ follower }}</span></a></li>
+							<li><a href="{% url 'profile' user.id  %}">Following<span>{{ following }}</span></a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="clear"></div>
+				<hr />
+				
+			</div>		
+		</div>
+		<div class="col-md-6">
+			<div class="wall">
+				{% for event in event_list %}
+					<div class="event_info">
+						<h2><a href="{% url 'event_info' event.id %}">{{ event.event_name }}</a></h2>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="wall">
+
+			</div>
+		</div>
+	</div>
+</div>
 
 {% endblock %}
-
