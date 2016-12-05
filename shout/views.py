@@ -357,3 +357,20 @@ def myevents(request):
     context = {"event_list": myevent}
 
     return render(request, "shout/myevents.html", context)
+
+def getEvents(request):
+
+    event_list = []
+    hashText = request.POST["hashText"]
+    for i in Events.objects.filter(event_name__contains=hashText):
+        event_list.append(objToDicttwo(i))
+    return HttpResponse(str(event_list))
+
+def objToDicttwo(obj):
+
+   objdict = {}
+   objdict["id"] = int(obj.id)
+   objdict["event_name"] = str(obj.event_name)
+   objdict["description"] = str(obj.event_descp)
+
+   return objdict

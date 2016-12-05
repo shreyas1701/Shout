@@ -42,6 +42,7 @@ $(document).ready(function(){
 		getshouts("home");
 	}else{
 		getshouts("hashtag");
+		getEvents();
 	}
 	
 	$(".dropdown").click(function(){
@@ -67,6 +68,26 @@ $(document).ready(function(){
 		}
 		e.preventDefault();
 	});
+
+	$( ".shouts" ).on( "click", ".likedShout", function(e) {
+		var id = $(this).attr("id")
+		unLikeTheShout(id);
+		$(this).removeClass("likedShout").addClass("likeShout");
+		$(this).html('<i class="fa fa-thumbs-up" aria-hidden="true"></i>Like');
+		var text = $(this).parent().parent().find(".numLikes").html();
+		var num = text.substring(0,text.indexOf(" "));
+		var num1 = parseInt(num);
+		if(num1 == 1){
+			text = "";
+			$(this).parent().parent().find(".numLikes").html(text);
+		}else{
+			num1--;
+			text = num1+" person likes this!";
+			$(this).parent().parent().find(".numLikes").html(text);
+		}
+		e.preventDefault();
+	});
+
 
 });
 
@@ -172,7 +193,7 @@ function getshouts(location){
 					likeText = "Liked";
 				}
 				shoutHtml += 	'<div class="shout">'+
-								'<h4><a href="profile/'+arr[i].user+'">'+arr[i].username+'</a></h4>'+
+								'<h4><a href="/profile/'+arr[i].user+'/">'+arr[i].username+'</a></h4>'+
 								'<p class="shout_text">'+shout_text+'</p>'+
 								'<p class="timestamp pull-right">'+arr[i].shout_at+'</p>'+
 								'<div class="clear"></div>'+
@@ -269,6 +290,57 @@ function likeTheShout(id) {
 		},
 		error:function(data){
 			console.log(data);
+		}
+	});
+}
+
+function unLikeTheShout(id) {
+	var dataObj = {
+		id: ""+id,
+	};
+	$.ajax({
+		url: '/unlike/',
+		type: 'post', 
+		data: dataObj,
+		datatype: 'json',
+		success: function(data){
+			console.log(data);
+		},
+		error:function(data){
+			console.log(data);
+		}
+	});
+}
+
+function getEvents(){
+
+	
+	var dataObj = {
+		hashText: ""+$("#hashText").val()
+	};
+
+
+	$.ajax({
+		url: '/getEvents/',
+		type: 'post', 
+		data: dataObj,
+		datatype: 'json',
+		success: function(data){
+			var arr = JSON.parse(data.replace(/'/g, '"'));
+			var eventHtml = "";
+			for (var i = arr.length - 1; i >= 0; i--) {
+				eventHtml += '<div class="col-md-4 box">'+
+					'<h4>'+arr[i].event_name+'</h4>'+
+					'<p>'+arr[i].description+'</p>'+
+					'<a href="/event_info/'+arr[i].id+'/" class="btn btn-large btn-primary">See More!</a>'+
+				'</div>'
+			}
+
+			$("#hashEvents").html(eventHtml);
+			
+		},
+		error: function(data){
+
 		}
 	});
 }
