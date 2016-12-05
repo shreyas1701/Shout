@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'^unlike/$', views.unlike, name="unlike"),
     url(r'^event_info/(?P<id>\d+)/$', views.event_info, name="event_info"),
     url(r'^getShouts/$', views.getShouts, name="getShouts"),
+    url(r'^getEvents/$', views.getEvents, name="getEvents"),
     url(r'^myevents/$', views.myevents, name="myevents"),
     url(r'^updateevent/$', views.updateevent, name='updateevent'),
 ]
