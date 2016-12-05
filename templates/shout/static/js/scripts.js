@@ -247,7 +247,8 @@ function hashTag(text) {
 			var txt = hashArr[i];
 			var symArr = [",", ".", "!", "?"]
 			for (var j = symArr.length - 1; j >= 0; j--) {
-				txt = txt.replace(symArr[j], "")
+				var rex = new RegExp("\\"+symArr[j], 'g');
+				txt = txt.replace(rex, "")
 			}
 
 			var linkText = "<a href='/hashtag/"+txt.substring(1,txt.length)+"/'>"+txt+"</a>";
@@ -268,6 +269,11 @@ function hashTag(text) {
 			}
 		}
 		if (hashLink !== ""){
+			var symArr = [",", ".", "!", "?"]
+			for (var j = symArr.length - 1; j >= 0; j--) {
+				var rex = new RegExp("\\"+symArr[j], 'g');
+				hashLink = hashLink.replace(rex, "");
+			}
 			var linkText = "<a href='/hashtag/"+hashLink.substring(1,hashLink.length)+"/'>"+hashLink+"</a>";
 			shout_text = shout_text.replace(hashLink, linkText);	
 		}
