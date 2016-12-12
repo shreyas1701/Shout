@@ -30,8 +30,22 @@ def home(request):
     shouts_num = len(Shouts.objects.filter(user=request.user.id))
     follower = len(FollowMap.objects.filter(following=loggedUser.id))
     following = len(FollowMap.objects.filter(follower=loggedUser.id))
-    ctx = {"event_list":event_list, "shouts_num":shouts_num, "follower":follower, "following":following}
+    flwList = get_follow_list(loggedUser.id)
+    ctx = {"event_list":event_list, "shouts_num":shouts_num, "follower":follower, "following":following, "flwList":flwList}
     return render(request, "shout/home.html",ctx)
+
+def get_follow_list(id):
+    follow_list = []
+    for x in User.objects.all():
+        if x.id != id and x.first_name != "":
+            try:
+                flwMp = FollowMap.objects.get(follower=id, following=x.id)
+            except FollowMap.DoesNotExist:
+                follow_list.append(x)
+
+    return follow_list
+        
+
 
 def register(request):
     registered = False
@@ -99,8 +113,16 @@ def events(request):
         startTime = request.POST["startTime"]
         endTime = request.POST["endTime"]
         location = request.POST["location"]
-        invitees = request.POST.getlist('invitees')
+        invis = request.POST["invis"]
+        invitees = []
+        if int(str(invis[0])) == 0:
+            for x in User.objects.all():
+                invitees.append(str(x.id))
+        else:
+            invitees = request.POST.getlist("invitees")
+
         invitees = ','.join(invitees)
+
         am_pm = startTime[-2:]
         only_time = startTime[:-3]
         start = start_date+"-"+only_time+":"+am_pm
@@ -167,7 +189,7 @@ def profile_view(request, id):
     shouts = change_time(shout_list)
     following = False
     try:
-        flwMp = FollowMap.objects.get(follower=loggedUser.id)
+        flwMp = FollowMap.objects.filter(follower=loggedUser.id)
     except FollowMap.DoesNotExist:
         flwMp = None
 
@@ -259,7 +281,7 @@ def followUser(request, id):
     loggedUser = request.user.id
     flwngUser = User.objects.get(id=id)
     try:
-        flwMp = FollowMap.objects.get(follower=loggedUser)
+        flwMp = FollowMap.objects.get(follower=loggedUser, following=id)
     except FollowMap.DoesNotExist:
         flwMp = None
 
@@ -267,7 +289,6 @@ def followUser(request, id):
         flwMp.delete();    
     else:
         if flwngUser:
-            print flwngUser
             follow = FollowMap(follower=loggedUser, following=id)
             follow.save()
 
@@ -311,7 +332,8 @@ def getShouts(request):
 
 
     elif location == "profile":
-        for i in Shouts.objects.filter(user=loggedUser.id).order_by('-shout_at'):
+        userId = request.POST["userId"]
+        for i in Shouts.objects.filter(user=userId).order_by('-shout_at'):
             shout_list.append(i)
 
     elif location == "hashtag":
@@ -320,7 +342,6 @@ def getShouts(request):
             shout_list.append(i)
 
     shouts = change_time(shout_list)
-    print shouts
     shoutList = []
     for x in shouts:
         liked = False

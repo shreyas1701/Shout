@@ -59,6 +59,18 @@
 					</div>
 					
 					<p><a href="/createEvent/" class="btn btn-large btn-primary">Create an event</a></p>
+
+					<div class="followList">
+						
+						<ul id="flwList">
+							<h4>People to follow</h4>
+							{% for userO in flwList %}
+								<li><a href="{% url 'profile' userO.id %}">{{ userO.first_name }} {{ userO.last_name }}</a>
+								<a href="{% url 'follow' userO.id  %}"><i class="fa fa-user-plus" aria-hidden="true"></i></a>
+								</li>
+							{% endfor %}
+						</ul>	
+					</div>
 				</div>
 			</div>
 		</div>

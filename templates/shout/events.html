@@ -61,11 +61,17 @@
             </div>
 			<div class="row">
 				<div class="col-sm-6">
-					<select data-placeholder="Select People to invite" name="invitees" style="width: inherit" multiple class="chosen-select">
-						{% for user in users %}
-                            <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name}}</option>
-                        {% endfor %}
-					</select>
+				<p>Invite All?</p>
+					All&nbsp;<input type="radio" name="invis" value="0" id="invSelct1" />
+					Select People to invite&nbsp;<input type="radio" name="invis" value="1" id="invSelct2" />
+					<div id="selectDiv">
+						<select data-placeholder="Select People to invite" name="invitees" style="width: inherit" multiple class="chosen-select">
+							{% for user in users %}
+	                            <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name}}</option>
+	                        {% endfor %}
+						</select>
+					</div>
+					
 				</div>
 			</div>
 			<br>

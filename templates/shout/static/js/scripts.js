@@ -36,6 +36,17 @@ $(document).ready(function(){
 	setInterval(function(){
 		notify();
 	},10*1000);
+
+	
+
+	$("#invSelct2").click(function(){
+		$("#selectDiv").show();		
+	});
+
+	$("#invSelct1").click(function(){
+		$("#selectDiv").hide();		
+	});
+
 	if($(".pageName").val() == "profile"){
 		getshouts("profile");	
 	}else if($(".pageName").val() == "home"){
@@ -88,7 +99,9 @@ $(document).ready(function(){
 		e.preventDefault();
 	});
 
-
+	setTimeout(function(){
+		$("#invSelct1").click();
+	},500);
 });
 
 function notify(frmwh){
@@ -150,10 +163,16 @@ function getshouts(location){
 	var dataObj = {
 		location: ""+location,
 	};
+
 	if(location == "hashtag"){
 		dataObj = {
 			location: ""+location,
 			hashText: ""+$("#hashText").val()
+		};
+	}else if(location == "profile"){
+		dataObj = {
+			location: ""+location,
+			userId: ""+$("#profLId").val()
 		};
 	}
 	

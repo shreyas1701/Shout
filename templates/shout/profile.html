@@ -7,7 +7,6 @@
 {% block body_block %}
 
 <div class="container">
-
 	<div class="row">
 		<div class="col-md-8">
 			<div class="wall">
@@ -15,6 +14,8 @@
 					<h3>{{ user_prof.first_name }} {{ user_prof.last_name }}</h3>
 					<p><a href="{% url 'profile' user_prof.id  %}">${{ user_prof.username }}</a></p>
 					<h4>{{ profile.bio }}</h4>
+					<input type="hidden" id="profLId" value="{{ user_prof.id }}">
+					<input type="hidden" class="pageName" name="pageName" value="profile" />
 					{% if user.id != user_prof.id %}
 						<a href="{% url 'follow' user_prof.id  %}" class="btn btn-large btn-primary pull-right">
 							{% if following %}
